@@ -1,0 +1,2 @@
+$kind: collection
+description: "MedVia Navi — the RAG service (~/Desktop/medvia-navi). Select the 'MedVia Navi Local' environment, paste NAVI_API_KEY from medvia-navi/.env into naviKey (never commit it), start the API with `navi-api`, then run the folders in order. Answers come from a 0.5B model: the tests check the contract (sources, refusal, language), and print every answer to the console for a human to read."

@@ -1,0 +1,18 @@
+$kind: http-request
+url: "{{naviUrl}}/v1/query"
+method: POST
+headers:
+  Content-Type: application/json
+  X-API-Key: '{{naviKey}}'
+body:
+  type: json
+  content: |-
+    {
+      "question": "a"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('HTTP 422', () => pm.response.to.have.status(422));
+    language: text/javascript
+order: 5000

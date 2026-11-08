@@ -1,0 +1,11 @@
+$kind: http-request
+url: "{{naviUrl}}/v1/documents/postman-test-invitation-letter"
+method: GET
+headers:
+  X-API-Key: '{{naviKey}}'
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('HTTP 404', () => pm.response.to.have.status(404));
+    language: text/javascript
+order: 7000

@@ -1,0 +1,3 @@
+$kind: collection
+description: "Ingest one test document, re-send it unchanged, find it with a question, delete it. Leaves the index as it was."
+order: 2000

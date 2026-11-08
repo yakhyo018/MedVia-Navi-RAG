@@ -1,0 +1,3 @@
+$kind: collection
+description: "The process is alive, Qdrant answers, and the API key guards /v1."
+order: 1000

@@ -1,0 +1,33 @@
+$kind: http-request
+url: "{{naviUrl}}/v1/documents"
+method: POST
+headers:
+  Content-Type: application/json
+  X-API-Key: '{{naviKey}}'
+body:
+  type: json
+  content: |-
+    {
+      "documents": [
+        {
+          "doc_id": "postman-test-invitation-letter",
+          "title": "Postman test — invitation letter",
+          "source_type": "guide",
+          "lang": "EN",
+          "text": "# Postman test — invitation letter\n\nMedVia itself does not issue visa invitation letters. After a booking is confirmed, the clinic sends a medical invitation letter within 3 working days."
+        },
+        {
+          "doc_id": "postman-test-invitation-letter",
+          "title": "Postman test — invitation letter",
+          "source_type": "guide",
+          "lang": "EN",
+          "text": "# Postman test — invitation letter\n\nMedVia itself does not issue visa invitation letters. After a booking is confirmed, the clinic sends a medical invitation letter within 3 working days."
+        }
+      ]
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('HTTP 422', () => pm.response.to.have.status(422));
+    language: text/javascript
+order: 3000

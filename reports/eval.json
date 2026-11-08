@@ -1,0 +1,208 @@
+{
+  "test_questions": 87,
+  "answerable": 69,
+  "unanswerable": 18,
+  "min_score": 0.8,
+  "top_k": 4,
+  "retrieval": {
+    "overall": {
+      "n": 69,
+      "hit@1": 95.7,
+      "hit@4": 100.0,
+      "mrr@10": 0.978
+    },
+    "by_lang": {
+      "EN": {
+        "n": 28,
+        "hit@1": 100.0,
+        "hit@4": 100.0,
+        "mrr@10": 1.0
+      },
+      "RU": {
+        "n": 24,
+        "hit@1": 91.7,
+        "hit@4": 100.0,
+        "mrr@10": 0.958
+      },
+      "UZ": {
+        "n": 17,
+        "hit@1": 94.1,
+        "hit@4": 100.0,
+        "mrr@10": 0.971
+      }
+    },
+    "top1_score": {
+      "answerable_mean": 0.904,
+      "unanswerable_mean": 0.856,
+      "answerable_min": 0.766,
+      "unanswerable_max": 0.923
+    },
+    "threshold_grid": [
+      {
+        "threshold": 0.76,
+        "answerable_kept": 100.0,
+        "unanswerable_blocked": 0.0
+      },
+      {
+        "threshold": 0.77,
+        "answerable_kept": 98.6,
+        "unanswerable_blocked": 0.0
+      },
+      {
+        "threshold": 0.78,
+        "answerable_kept": 98.6,
+        "unanswerable_blocked": 5.6
+      },
+      {
+        "threshold": 0.79,
+        "answerable_kept": 97.1,
+        "unanswerable_blocked": 5.6
+      },
+      {
+        "threshold": 0.8,
+        "answerable_kept": 97.1,
+        "unanswerable_blocked": 11.1
+      },
+      {
+        "threshold": 0.81,
+        "answerable_kept": 95.7,
+        "unanswerable_blocked": 16.7
+      },
+      {
+        "threshold": 0.82,
+        "answerable_kept": 95.7,
+        "unanswerable_blocked": 22.2
+      },
+      {
+        "threshold": 0.83,
+        "answerable_kept": 95.7,
+        "unanswerable_blocked": 33.3
+      },
+      {
+        "threshold": 0.84,
+        "answerable_kept": 92.8,
+        "unanswerable_blocked": 33.3
+      },
+      {
+        "threshold": 0.85,
+        "answerable_kept": 92.8,
+        "unanswerable_blocked": 38.9
+      },
+      {
+        "threshold": 0.86,
+        "answerable_kept": 92.8,
+        "unanswerable_blocked": 50.0
+      },
+      {
+        "threshold": 0.87,
+        "answerable_kept": 91.3,
+        "unanswerable_blocked": 55.6
+      },
+      {
+        "threshold": 0.88,
+        "answerable_kept": 85.5,
+        "unanswerable_blocked": 61.1
+      },
+      {
+        "threshold": 0.89,
+        "answerable_kept": 78.3,
+        "unanswerable_blocked": 77.8
+      },
+      {
+        "threshold": 0.9,
+        "answerable_kept": 63.8,
+        "unanswerable_blocked": 77.8
+      },
+      {
+        "threshold": 0.91,
+        "answerable_kept": 49.3,
+        "unanswerable_blocked": 88.9
+      },
+      {
+        "threshold": 0.92,
+        "answerable_kept": 33.3,
+        "unanswerable_blocked": 94.4
+      },
+      {
+        "threshold": 0.93,
+        "answerable_kept": 20.3,
+        "unanswerable_blocked": 100.0
+      },
+      {
+        "threshold": 0.94,
+        "answerable_kept": 10.1,
+        "unanswerable_blocked": 100.0
+      }
+    ]
+  },
+  "base": {
+    "answer_accuracy": 76.8,
+    "answer_accuracy_when_retrieved": 79.1,
+    "grounded_citation": 8.7,
+    "any_citation": 8.7,
+    "answer_in_question_language": 59.4,
+    "false_refusal": 1.5,
+    "refusal_accuracy": 22.2,
+    "invalid_citations": 0,
+    "mean_latency_ms": 597,
+    "by_lang": {
+      "EN": {
+        "answer_accuracy": 92.9,
+        "grounded_citation": 17.9,
+        "in_language": 100.0,
+        "refusal_accuracy": 22.2
+      },
+      "RU": {
+        "answer_accuracy": 75.0,
+        "grounded_citation": 4.2,
+        "in_language": 41.7,
+        "refusal_accuracy": 33.3
+      },
+      "UZ": {
+        "answer_accuracy": 52.9,
+        "grounded_citation": 0.0,
+        "in_language": 17.6,
+        "refusal_accuracy": 0.0
+      }
+    },
+    "refusal_by_kind": {
+      "manual": 30.0,
+      "not_offered": 12.5
+    }
+  },
+  "lora": {
+    "answer_accuracy": 76.8,
+    "answer_accuracy_when_retrieved": 79.1,
+    "grounded_citation": 84.1,
+    "any_citation": 88.4,
+    "answer_in_question_language": 98.6,
+    "false_refusal": 9.0,
+    "refusal_accuracy": 83.3,
+    "invalid_citations": 0,
+    "mean_latency_ms": 532,
+    "by_lang": {
+      "EN": {
+        "answer_accuracy": 85.7,
+        "grounded_citation": 89.3,
+        "in_language": 100.0,
+        "refusal_accuracy": 100.0
+      },
+      "RU": {
+        "answer_accuracy": 70.8,
+        "grounded_citation": 70.8,
+        "in_language": 100.0,
+        "refusal_accuracy": 83.3
+      },
+      "UZ": {
+        "answer_accuracy": 70.6,
+        "grounded_citation": 94.1,
+        "in_language": 94.1,
+        "refusal_accuracy": 33.3
+      }
+    },
+    "refusal_by_kind": {
+      "manual": 80.0,
+      "not_offered": 87.5
+    }
+  }
+}

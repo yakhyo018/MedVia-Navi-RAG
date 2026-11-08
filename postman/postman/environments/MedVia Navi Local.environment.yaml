@@ -1,0 +1,6 @@
+name: MedVia Navi Local
+values:
+  - key: naviUrl
+    value: 'http://127.0.0.1:8100'
+  - key: naviKey
+    value: ''

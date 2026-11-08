@@ -1,0 +1,19 @@
+# Local: `docker compose up -d qdrant` and run the API with `navi-api`.
+# Everything in Docker: `docker compose up -d --build`.
+services:
+  qdrant:
+    image: qdrant/qdrant:v1.12.4
+    ports:
+      - '127.0.0.1:6333:6333'   # localhost only: Qdrant has no auth unless a key is set
+    volumes:
+      - ./qdrant_storage:/qdrant/storage
+
+  navi-api:
+    build: .
+    env_file: .env
+    environment:
+      NAVI_QDRANT_URL: http://qdrant:6333
+    ports:
+      - '127.0.0.1:8100:8100'
+    depends_on:
+      - qdrant

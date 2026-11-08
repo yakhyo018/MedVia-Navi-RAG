@@ -1,0 +1,24 @@
+$kind: http-request
+url: "{{naviUrl}}/v1/query"
+method: POST
+headers:
+  Content-Type: application/json
+  X-API-Key: '{{naviKey}}'
+body:
+  type: json
+  content: |-
+    {
+      "question": "What is the capital of France?"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      const body = (() => { try { return pm.response.json(); } catch (e) { return {}; } })();
+
+      console.log('ANSWER:', body.answer);
+      pm.test('HTTP 200', () => pm.response.to.have.status(200));
+      pm.test('refused', () => pm.expect(body.refused).to.eql(true));
+      pm.test('the model was not called (no source above min_score)', () => pm.expect(body.used_llm).to.eql(false));
+      pm.test('no sources', () => pm.expect(body.sources).to.eql([]));
+    language: text/javascript
+order: 4000

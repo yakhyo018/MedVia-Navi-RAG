@@ -1,0 +1,28 @@
+$kind: http-request
+url: "{{naviUrl}}/v1/query"
+method: POST
+headers:
+  Content-Type: application/json
+  X-API-Key: '{{naviKey}}'
+body:
+  type: json
+  content: |-
+    {
+      "question": "How far ahead can I book a treatment on MedVia?"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      const body = (() => { try { return pm.response.json(); } catch (e) { return {}; } })();
+
+      const sources = body.sources || [];
+      console.log('ANSWER:', body.answer, '| cited:', JSON.stringify(sources.filter(s => s.cited).map(s => s.index)));
+      pm.test('HTTP 200', () => pm.response.to.have.status(200));
+      pm.test('not refused', () => pm.expect(body.refused, body.answer).to.eql(false));
+      pm.test('the model was called', () => pm.expect(body.used_llm).to.eql(true));
+      pm.test('no invalid citations', () => pm.expect(body.invalid_citations).to.eql([]));
+
+      pm.test('the booking guide is a source', () =>
+        pm.expect(sources.map(s => s.doc_id)).to.include('guide-how-booking-works'));
+    language: text/javascript
+order: 1000

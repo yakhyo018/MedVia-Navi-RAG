@@ -1,0 +1,14 @@
+$kind: http-request
+url: "{{naviUrl}}/v1/ping"
+method: GET
+headers:
+  X-API-Key: '{{naviKey}}'
+scripts:
+  - type: afterResponse
+    code: |-
+      const body = (() => { try { return pm.response.json(); } catch (e) { return {}; } })();
+
+      pm.test('HTTP 200 (401 = naviKey is not the NAVI_API_KEY of medvia-navi/.env)', () => pm.response.to.have.status(200));
+      pm.test('service name', () => pm.expect(body.service).to.be.a('string'));
+    language: text/javascript
+order: 4000

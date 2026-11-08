@@ -1,0 +1,28 @@
+$kind: http-request
+url: "{{naviUrl}}/v1/query"
+method: POST
+headers:
+  Content-Type: application/json
+  X-API-Key: '{{naviKey}}'
+body:
+  type: json
+  content: |-
+    {
+      "question": "Какой адрес у Itaewon Compass Dental?"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      const body = (() => { try { return pm.response.json(); } catch (e) { return {}; } })();
+
+      const sources = body.sources || [];
+      console.log('ANSWER:', body.answer, '| cited:', JSON.stringify(sources.filter(s => s.cited).map(s => s.index)));
+      pm.test('HTTP 200', () => pm.response.to.have.status(200));
+      pm.test('not refused', () => pm.expect(body.refused, body.answer).to.eql(false));
+      pm.test('the model was called', () => pm.expect(body.used_llm).to.eql(true));
+      pm.test('no invalid citations', () => pm.expect(body.invalid_citations).to.eql([]));
+
+      pm.test('the address is in the answer', () => pm.expect(body.answer).to.include('Itaewon-ro'));
+      pm.test('answer is in Russian (Cyrillic)', () => pm.expect(body.answer).to.match(/[а-яё]/i));
+    language: text/javascript
+order: 2000

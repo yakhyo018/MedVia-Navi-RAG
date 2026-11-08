@@ -1,0 +1,12 @@
+$kind: http-request
+url: "{{naviUrl}}/health/ready"
+method: GET
+scripts:
+  - type: afterResponse
+    code: |-
+      const body = (() => { try { return pm.response.json(); } catch (e) { return {}; } })();
+
+      pm.test('HTTP 200 (503 = Qdrant down)', () => pm.response.to.have.status(200));
+      pm.test('qdrant ok', () => pm.expect(body.qdrant).to.eql('ok'));
+    language: text/javascript
+order: 2000

@@ -1,0 +1,18 @@
+.env
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.venv/
+dist/
+build/
+# Model weights and Qdrant data never go into git (R4: adapters are published to Hugging Face).
+models/
+qdrant_storage/
+*.safetensors
+*.pt
+*.pth
+qdrant_local/
+reports_train.log
+reports_eval.log

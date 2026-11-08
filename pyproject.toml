@@ -1,0 +1,63 @@
+[project]
+name = "medvia-navi"
+version = "0.1.0"
+description = "MedVia Navi — a RAG service that answers patients' questions from MedVia's own content, with sources."
+readme = "README.md"
+requires-python = ">=3.11,<3.13"
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.30",
+    "pydantic>=2.8",
+    "pydantic-settings>=2.4",
+    "qdrant-client>=1.12",
+]
+
+[project.scripts]
+navi-api = "navi.main:run"
+
+[project.optional-dependencies]
+# R2 / R3: embeddings and the local model. Kept apart so CI and R1 install in seconds.
+ml = [
+    "sentence-transformers>=3.0",
+    "transformers>=4.45",
+    "torch>=2.4",
+    "peft>=0.13",
+    "trl>=0.12",
+    "datasets>=3.0",
+    "accelerate>=1.0",
+]
+dev = [
+    "pytest>=8.3",
+    "httpx>=0.27",
+    "ruff>=0.6",
+]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+# E/W pycodestyle, F pyflakes, I import order, B bugbear, UP pyupgrade, S bandit (security).
+select = ["E", "W", "F", "I", "B", "UP", "S"]
+ignore = ["B008"]  # FastAPI's Depends() in defaults is the framework's own pattern.
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101", "S105", "S106"]  # assert and fixed test secrets are fine in tests.
+# Prompts are prose: one sentence per line reads better than a wrapped string.
+"src/navi/services/prompting.py" = ["E501"]
+"scripts/**" = ["S101", "E501", "S311"]  # seeded shuffles for data splits, not secrets
+
+[tool.ruff.format]
+quote-style = "single"
