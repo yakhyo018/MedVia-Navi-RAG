@@ -44,6 +44,9 @@ class Settings(BaseSettings):
     # The LoRA adapter from R4 (`models/navi-lora`); empty = the base model.
     llm_adapter_path: str | None = None
     device: str = 'auto'
+    # `auto` = float32 on the CPU, float16 on a GPU. `bfloat16` halves memory on a CPU with
+    # AVX-512 BF16 (the production EPYC has it); measured before it is switched on.
+    dtype: Literal['auto', 'float32', 'float16', 'bfloat16'] = 'auto'
     max_new_tokens: int = 160
 
     top_k: int = Field(default=4, ge=1, le=10)

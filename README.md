@@ -49,6 +49,37 @@ question ──POST /v1/query──▶ e5 (query:) ─▶ Qdrant top 4 ─▶ sc
                                               answer + [n] checked against the sources
 ```
 
+## Deploy (production, next to MedVia)
+
+Runs on MedVia's server beside MedVia's own containers — `docker-compose.prod.yml`:
+
+```
+medvia-api / medvia-batch ──medvia_monorepo-network──▶ medvia-navi:8100 ──navi-internal──▶ medvia-navi-qdrant
+```
+
+- **No published port.** Only MedVia's API (`askNavi`) and batch (`NAVI_SYNC`) reach Navi, at
+  `http://medvia-navi:8100`; Qdrant is on an `internal` network only Navi joins.
+- **Image:** `python:3.11-slim` + CPU-only torch + the `[serve]` extra (no training tools).
+  e5 and Qwen are downloaded on the first start into the `navi-hf-cache` volume.
+- **Model:** Qwen2.5-0.5B-Instruct + the LoRA adapter, on the CPU. The adapter is not in git:
+  it is copied once to `models/navi-lora` on the server and mounted read-only.
+- **Limits:** 4 GB memory, half the CPU weight of MedVia's containers, `OMP_NUM_THREADS=2`.
+
+First time (on the server, in `/home/MedVia-project`):
+
+```bash
+git clone git@github-medvia-navi:yakhyo018/MedVia-Navi-RAG.git medvia-navi
+printf 'NAVI_API_KEY=%s\n' "$(openssl rand -hex 32)" > medvia-navi/.env && chmod 600 medvia-navi/.env
+# from the laptop:  scp -r models/navi-lora root@<server>:/home/MedVia-project/medvia-navi/models/
+cd medvia-navi && ./deploy.sh
+docker exec medvia-navi python scripts/ingest_guides.py   # the 7 guides
+docker exec medvia-batch npm run navi:sync                # MedVia's content, from production
+```
+
+Then MedVia's `.env` gets `NAVI_URL=http://medvia-navi:8100` and the same `NAVI_API_KEY`, and
+the API and batch are recreated. Updates: `./deploy.sh` (pull main, rebuild, recreate).
+`data/corpus/medvia.jsonl` is a development export and is never ingested in production.
+
 ## Run
 
 ```bash

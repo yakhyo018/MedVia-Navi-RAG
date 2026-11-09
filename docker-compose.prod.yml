@@ -1,0 +1,61 @@
+# PRODUCTION (MedVia's server, next to MedVia's own compose): `./deploy.sh` pulls main and runs
+#   docker compose -f docker-compose.prod.yml up -d --build
+# No published ports: only MedVia's API and batch reach Navi, over MedVia's Docker network,
+# at http://medvia-navi:8100. Qdrant sits on a network of its own that only Navi joins.
+# Needs on the server: .env with NAVI_API_KEY, and the LoRA adapter in ./models/navi-lora
+# (not in git; copied by hand, see README → Deploy).
+name: medvia-navi
+
+services:
+  medvia-navi-qdrant:
+    container_name: medvia-navi-qdrant
+    # `unprivileged`: the same Qdrant, running as a non-root user.
+    image: qdrant/qdrant:v1.20.0-unprivileged
+    restart: always
+    environment:
+      QDRANT__TELEMETRY_DISABLED: 'true'
+    volumes:
+      - navi-qdrant-data:/qdrant/storage
+    networks:
+      - navi-internal
+    mem_limit: 512m
+
+  medvia-navi:
+    container_name: medvia-navi
+    build: .
+    image: medvia-navi:latest
+    restart: always
+    # Only the secret lives in .env (NAVI_API_KEY); the rest is fixed here.
+    env_file: .env
+    environment:
+      NAVI_ENVIRONMENT: production
+      NAVI_QDRANT_URL: http://medvia-navi-qdrant:6333
+      NAVI_LLM_ADAPTER_PATH: /app/models/navi-lora
+      NAVI_DEVICE: cpu
+      # The server has 2 vCPUs: torch would otherwise spread one generation over every core.
+      OMP_NUM_THREADS: '2'
+    volumes:
+      - navi-hf-cache:/home/navi/.cache/huggingface
+      - ./models/navi-lora:/app/models/navi-lora:ro
+    networks:
+      - navi-internal
+      - medvia
+    depends_on:
+      - medvia-navi-qdrant
+    # Qwen 0.5B in float32 + e5 ≈ 3 GB; the cap keeps a runaway from starving MedVia.
+    mem_limit: 4g
+    # Half the default CPU weight: when the API and Navi both want the CPU, the API wins;
+    # when the server is idle, Navi still uses both cores.
+    cpu_shares: 512
+
+networks:
+  # internal: no route to the internet — Qdrant needs none.
+  navi-internal:
+    internal: true
+  medvia:
+    external: true
+    name: medvia_monorepo-network
+
+volumes:
+  navi-qdrant-data:
+  navi-hf-cache:

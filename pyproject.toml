@@ -9,13 +9,23 @@ dependencies = [
     "uvicorn[standard]>=0.30",
     "pydantic>=2.8",
     "pydantic-settings>=2.4",
-    "qdrant-client>=1.12",
+    # Same minor as the Qdrant server image (qdrant/qdrant:v1.20.0 in both compose files):
+    # the client warns and may refuse a server more than one minor version away.
+    "qdrant-client>=1.20,<1.21",
 ]
 
 [project.scripts]
 navi-api = "navi.main:run"
 
 [project.optional-dependencies]
+# Production image: what the API needs to embed and to answer, without the training tools
+# (trl, datasets, accelerate). The Dockerfile installs a CPU-only torch first.
+serve = [
+    "sentence-transformers>=3.0",
+    "transformers>=4.45",
+    "torch>=2.4",
+    "peft>=0.13",
+]
 # R2 / R3: embeddings and the local model. Kept apart so CI and R1 install in seconds.
 ml = [
     "sentence-transformers>=3.0",
