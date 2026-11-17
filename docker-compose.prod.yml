@@ -32,6 +32,9 @@ services:
       NAVI_QDRANT_URL: http://medvia-navi-qdrant:6333
       NAVI_LLM_ADAPTER_PATH: /app/models/navi-lora
       NAVI_DEVICE: cpu
+      # Measured on the server (EPYC 9354P, 2 vCPU, AVX-512 BF16), 2026-11-17: the same answer,
+      # 10.9 s → 6.6 s per generated answer and 2.8 → 1.7 GB of memory against float32.
+      NAVI_DTYPE: bfloat16
       # The server has 2 vCPUs: torch would otherwise spread one generation over every core.
       OMP_NUM_THREADS: '2'
     volumes:
@@ -42,8 +45,9 @@ services:
       - medvia
     depends_on:
       - medvia-navi-qdrant
-    # Qwen 0.5B in float32 + e5 ≈ 3 GB; the cap keeps a runaway from starving MedVia.
-    mem_limit: 4g
+    # Qwen 0.5B in bfloat16 + e5 ≈ 1.7 GB in use (2.8 GB in float32); the cap keeps a runaway
+    # from starving MedVia.
+    mem_limit: 3g
     # Half the default CPU weight: when the API and Navi both want the CPU, the API wins;
     # when the server is idle, Navi still uses both cores.
     cpu_shares: 512
