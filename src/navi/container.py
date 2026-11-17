@@ -33,6 +33,7 @@ def build_generator(settings: Settings) -> Generator:
         adapter_path=settings.llm_adapter_path or None,
         device=settings.device,
         max_new_tokens=settings.max_new_tokens,
+        dtype=settings.dtype,
     )
 
 

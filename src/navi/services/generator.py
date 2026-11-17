@@ -29,6 +29,17 @@ def pick_device(preferred: str = 'auto') -> str:
     return 'cpu'
 
 
+def pick_dtype(torch, device: str, preferred: str = 'auto'):
+    """
+    `auto`: half precision on a GPU (CUDA / Apple MPS) halves memory; a CPU gets float32,
+    because float16 matrix maths on most CPUs is slow. `bfloat16` is the CPU's half precision —
+    fast only where the CPU has BF16 instructions (AVX-512 BF16, AMX).
+    """
+    if preferred != 'auto':
+        return getattr(torch, preferred)
+    return torch.float32 if device == 'cpu' else torch.float16
+
+
 class LocalGenerator:
     def __init__(
         self,
@@ -36,6 +47,7 @@ class LocalGenerator:
         adapter_path: str | None = None,
         device: str = 'auto',
         max_new_tokens: int = 160,
+        dtype: str = 'auto',
     ) -> None:
         import torch
         from transformers import AutoModelForCausalLM, AutoTokenizer
@@ -44,9 +56,9 @@ class LocalGenerator:
         self.device = pick_device(device)
         self.max_new_tokens = max_new_tokens
         self.tokenizer = AutoTokenizer.from_pretrained(model_name)
-        # Half precision on a GPU (CUDA / Apple MPS) halves memory; the CPU needs float32.
-        dtype = torch.float32 if self.device == 'cpu' else torch.float16
-        model = AutoModelForCausalLM.from_pretrained(model_name, dtype=dtype)
+        model = AutoModelForCausalLM.from_pretrained(
+            model_name, dtype=pick_dtype(torch, self.device, dtype)
+        )
         if adapter_path:
             from peft import PeftModel
 

@@ -13,8 +13,9 @@ CORPUS = ROOT / 'data' / 'corpus'
 LOCAL_QDRANT = f'path:{ROOT / "qdrant_local"}'
 
 
-def load_corpus() -> list[Document]:
-    docs = [Document(**json.loads(line)) for line in (CORPUS / 'medvia.jsonl').open()]
+def load_guides() -> list[Document]:
+    """The hand-written guides (`guide-*`): the only content MedVia's nightly sync never sends."""
+    docs = []
     for md in sorted((CORPUS / 'guides').glob('*.md')):
         text = md.read_text(encoding='utf-8')
         title = text.splitlines()[0].lstrip('# ').strip()
@@ -22,6 +23,11 @@ def load_corpus() -> list[Document]:
             Document(doc_id=f'guide-{md.stem}', title=title, text=text, source_type='guide')
         )
     return docs
+
+
+def load_corpus() -> list[Document]:
+    docs = [Document(**json.loads(line)) for line in (CORPUS / 'medvia.jsonl').open()]
+    return docs + load_guides()
 
 
 def script_settings(**overrides) -> Settings:

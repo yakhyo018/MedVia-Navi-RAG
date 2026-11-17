@@ -2,7 +2,7 @@
 # Everything in Docker: `docker compose up -d --build`.
 services:
   qdrant:
-    image: qdrant/qdrant:v1.12.4
+    image: qdrant/qdrant:v1.20.0
     ports:
       - '127.0.0.1:6333:6333'   # localhost only: Qdrant has no auth unless a key is set
     volumes:

@@ -1,0 +1,17 @@
+# The build context: only what the Dockerfile copies. Secrets, weights and data stay out.
+.env
+.git
+.github
+.pytest_cache
+.ruff_cache
+**/__pycache__
+models
+qdrant_local
+qdrant_storage
+data/dataset
+data/qa
+reports
+reports_*.log
+postman
+tests
+docs
