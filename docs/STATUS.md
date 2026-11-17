@@ -1,6 +1,22 @@
 # Status
 
-_Last updated: 2026-11-07 — R1–R5 built and measured, nothing committed yet._
+_Last updated: 2026-11-17 — deployed to MedVia's production server; production `askNavi` answers._
+
+## Production (2026-11-17, `feature/deploy` → main)
+
+- Runs beside MedVia on its server (`/home/MedVia-project/medvia-navi`, `docker-compose.prod.yml`):
+  `medvia-navi` (Qwen2.5-0.5B + LoRA, bfloat16 on the CPU, 3 GB cap) and `medvia-navi-qdrant`
+  (v1.20, internal network). No published port; MedVia reaches it at `http://medvia-navi:8100`.
+- Server: AMD EPYC 9354P, 2 vCPU, 7.7 GB. Measured: float32 10.9 s / 2.8 GB → bfloat16
+  6.6 s (5.6 s warm) / 1.7 GB, same answer; refusals below the threshold ~0 s (no LLM).
+- Index: 7 guides (`scripts/ingest_guides.py`, through the API) + 55 MedVia documents from
+  `npm run navi:sync` in medvia-batch (nightly 03:30 after that).
+- Git on the server: read-only deploy key `~/.ssh/medvia_navi`, SSH host `github-medvia-navi`.
+  The LoRA adapter was copied by hand to `models/navi-lora` (sha256 checked).
+- Checked from the MedVia API container: 401 without the key, an English question answered with
+  its cited guide, port 8100 closed from outside. Free-form RU / UZ questions score below 0.80
+  and are refused (the known weakness below), English ones are answered.
+- Updates: `./deploy.sh` on the server (manual; CI's forced command knows only `api` / `web`).
 
 ## Done
 
